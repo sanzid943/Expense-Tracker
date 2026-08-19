@@ -1,4 +1,5 @@
-// ===================== App state =====================
+// app state
+
 Auth.requireAuth();
 
 const CURRENCY_SYMBOLS = { USD: '$', EUR: '€', GBP: '£', BDT: '৳', INR: '₹' };
@@ -18,7 +19,9 @@ function fmt(amount) {
   return currencySymbol() + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// ===================== Init =====================
+
+// init
+
 async function init() {
   applyTheme(State.user && State.user.theme === 'dark');
   document.getElementById('themeSwitch').checked = State.user && State.user.theme === 'dark';
@@ -51,7 +54,9 @@ function applyTheme(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
 }
 
-// ===================== Navigation =====================
+
+// navigation
+
 function wireNav() {
   document.querySelectorAll('.nav a').forEach(a => {
     a.addEventListener('click', () => switchView(a.dataset.view));
@@ -91,7 +96,9 @@ async function switchView(view) {
   if (view === 'settings') await loadSettings();
 }
 
-// ===================== Global controls =====================
+
+// global controls
+
 function wireGlobalControls() {
   document.getElementById('themeSwitch').addEventListener('change', async (e) => {
     const dark = e.target.checked;
@@ -108,7 +115,9 @@ function wireGlobalControls() {
   document.getElementById('logoutBtn').addEventListener('click', () => Auth.logout());
 }
 
-// ===================== Categories =====================
+
+// categories
+
 async function loadCategories() {
   State.categories = await API.get('/categories');
 }
@@ -147,7 +156,9 @@ function updateTxCategoryOptions() {
   });
 }
 
-// ===================== Dashboard =====================
+
+// dashboard
+
 async function loadDashboard() {
   const [summary, monthly, catSummary, prediction, budgetStatus, txList] = await Promise.all([
     API.get(`/transactions/meta/summary?month=${State.currentMonth}`),
@@ -191,7 +202,9 @@ async function loadDashboard() {
   });
 }
 
-// ===================== Transactions =====================
+
+// transactions
+
 let txCache = [];
 
 async function loadTransactions() {
@@ -314,7 +327,9 @@ async function removeTransaction(id) {
   await loadTransactions();
 }
 
-// ===================== Budget =====================
+
+// budget
+
 async function loadBudget() {
   const month = document.getElementById('budgetMonth').value || State.currentMonth;
   const [status] = await Promise.all([API.get(`/budgets/status/${month}`)]);
@@ -353,7 +368,9 @@ function wireBudgetModal() {
   document.getElementById('budgetMonth').addEventListener('change', loadBudget);
 }
 
-// ===================== Insights =====================
+
+// insights
+
 async function loadInsights() {
   const [patterns, alerts, recommendation, prediction] = await Promise.all([
     API.get('/insights/patterns'),
@@ -391,7 +408,9 @@ async function loadInsights() {
     `Next month's expenses are predicted at ${fmt(prediction.predictedNextMonth)} — trend is ${prediction.trend}.`;
 }
 
-// ===================== Goals =====================
+
+// goals
+
 let goalsCache = [];
 async function loadGoals() {
   goalsCache = await API.get('/goals');
@@ -454,7 +473,9 @@ async function removeGoal(id) {
   await loadGoals();
 }
 
-// ===================== Reports =====================
+
+// reports
+
 let reportCache = null;
 async function loadReport() {
   const month = document.getElementById('reportMonth').value || State.currentMonth;
@@ -494,7 +515,9 @@ async function loadReport() {
   document.getElementById('reportExportPdfBtn').onclick = () => exportReportPDF(report, currencySymbol());
 }
 
-// ===================== Settings =====================
+
+// settings
+
 function wireSettings() {
   document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
   document.getElementById('changePasswordBtn').addEventListener('click', changePassword);
@@ -562,5 +585,7 @@ async function removeCategory(id) {
   renderCustomCategories();
 }
 
-// ===================== Boot =====================
+
+// boot
+
 init();

@@ -1,4 +1,5 @@
-// Chart.js helpers — keeps single instance per canvas, destroys before redraw
+// chart.js helpers
+
 const ChartRegistry = {};
 
 function themeColors() {
