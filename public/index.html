@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpendTrack</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="mark">৳</div><span>SpendTrack</span></div>
+    <ul class="nav" id="navList">
+      <li><a data-view="dashboard" class="active"><span class="ic">◆</span> Dashboard</a></li>
+      <li><a data-view="transactions"><span class="ic">≡</span> Transactions</a></li>
+      <li><a data-view="budget"><span class="ic">◔</span> Budget</a></li>
+      <li><a data-view="insights"><span class="ic">✦</span> Insights</a></li>
+      <li><a data-view="goals"><span class="ic">◎</span> Savings Goals</a></li>
+      <li><a data-view="reports"><span class="ic">▤</span> Reports</a></li>
+      <li><a data-view="settings"><span class="ic">⚙</span> Settings</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      <div class="theme-toggle">
+        <span>Dark mode</span>
+        <label class="switch">
+          <input type="checkbox" id="themeSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="logout-link" id="logoutBtn">↩ Log out</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h1 id="viewTitle">Dashboard</h1>
+          <div class="sub" id="viewSub">Here's your financial overview</div>
+        </div>
+      </div>
+      <div class="user-chip">
+        <div class="avatar" id="userAvatar">U</div>
+        <div>
+          <div style="font-weight:600;font-size:.9rem;" id="userName">User</div>
+          <div class="muted" style="font-size:.76rem;" id="userEmail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <section class="view active" id="view-dashboard">
+      <div class="grid grid-4">
+        <div class="card stat-card">
+          <div class="stat-label">Total Income</div>
+          <div class="stat-value income mono" id="statIncome">$0</div>
+          <div class="stat-sub" id="statIncomeSub">This month</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Total Expense</div>
+          <div class="stat-value expense mono" id="statExpense">$0</div>
+          <div class="stat-sub" id="statExpenseSub">This month</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Balance</div>
+          <div class="stat-value balance mono" id="statBalance">$0</div>
+          <div class="stat-sub">Income − Expense</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Predicted Next Month</div>
+          <div class="stat-value mono" id="statPrediction" style="color:var(--warn)">$0</div>
+          <div class="stat-sub" id="statPredictionSub">Based on trend</div>
+        </div>
+      </div>
+
+      <div class="grid grid-2 section-gap">
+        <div class="card">
+          <div class="card-head"><h3>Income vs Expense (6 months)</h3></div>
+          <div class="chart-box"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Category-wise Expense</h3></div>
+          <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid grid-2 section-gap">
+        <div class="card">
+          <div class="card-head"><h3>Recent Transactions</h3><a data-view="transactions" style="font-size:.82rem;color:var(--accent);cursor:pointer;font-weight:600;">View all →</a></div>
+          <div class="table-wrap"><table id="recentTxTable"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th class="text-right">Amount</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Budget Warnings</h3><a data-view="budget" style="font-size:.82rem;color:var(--accent);cursor:pointer;font-weight:600;">Manage →</a></div>
+          <div id="dashboardBudgetWarnings"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TRANSACTIONS VIEW ============ -->
+    <section class="view" id="view-transactions">
+      <div class="toolbar">
+        <input type="text" id="txSearch" placeholder="Search description or category...">
+        <select id="txTypeFilter">
+          <option value="">All types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="txCategoryFilter"><option value="">All categories</option></select>
+        <input type="date" id="txStartDate">
+        <input type="date" id="txEndDate">
+        <div class="spacer"></div>
+        <button class="btn btn-secondary btn-sm" id="exportCsvBtn">Export CSV</button>
+        <button class="btn btn-secondary btn-sm" id="exportPdfBtn">Export PDF</button>
+        <button class="btn btn-primary btn-sm" id="addTxBtn">+ Add Transaction</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table id="txTable">
+            <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th class="text-right">Amount</th><th></th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="txEmptyState" style="display:none;">
+          <div class="ic">🧾</div>
+          <div>No transactions yet. Add your first income or expense.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BUDGET VIEW ============ -->
+    <section class="view" id="view-budget">
+      <div class="toolbar">
+        <label class="muted" style="font-size:.85rem;">Month:</label>
+        <input type="month" id="budgetMonth">
+        <div class="spacer"></div>
+        <button class="btn btn-primary btn-sm" id="addBudgetBtn">+ Set Budget</button>
+      </div>
+      <div class="grid grid-3" id="budgetCards"></div>
+      <div class="empty-state" id="budgetEmptyState" style="display:none;">
+        <div class="ic">◔</div>
+        <div>No budgets set for this month yet.</div>
+      </div>
+    </section>
+
+    <!-- ============ INSIGHTS VIEW ============ -->
+    <section class="view" id="view-insights">
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Spending Pattern (6 months)</h3></div>
+          <div class="chart-box tall"><canvas id="patternChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Unusual Spending Alerts</h3></div>
+          <div id="alertsList"></div>
+        </div>
+      </div>
+      <div class="grid grid-2 section-gap">
+        <div class="card">
+          <div class="card-head"><h3>Budget Recommendation</h3></div>
+          <div class="muted" style="font-size:.82rem;margin-bottom:10px;">Based on your last 3 months of spending, and a 50/30/20 income guideline.</div>
+          <div id="recommendationList"></div>
+          <div class="grid grid-3 section-gap" id="rule502030"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Expense Prediction</h3></div>
+          <div class="chart-box"><canvas id="predictionChart"></canvas></div>
+          <div class="stat-sub section-gap" id="predictionText"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GOALS VIEW ============ -->
+    <section class="view" id="view-goals">
+      <div class="toolbar">
+        <div class="spacer"></div>
+        <button class="btn btn-primary btn-sm" id="addGoalBtn">+ New Goal</button>
+      </div>
+      <div class="grid grid-3" id="goalsGrid"></div>
+      <div class="empty-state" id="goalsEmptyState" style="display:none;">
+        <div class="ic">◎</div>
+        <div>No savings goals yet. Set one to start tracking progress.</div>
+      </div>
+    </section>
+
+    <!-- ============ REPORTS VIEW ============ -->
+    <section class="view" id="view-reports">
+      <div class="toolbar">
+        <label class="muted" style="font-size:.85rem;">Month:</label>
+        <input type="month" id="reportMonth">
+        <div class="spacer"></div>
+        <button class="btn btn-secondary btn-sm" id="reportExportCsvBtn">Export CSV</button>
+        <button class="btn btn-primary btn-sm" id="reportExportPdfBtn">Export PDF</button>
+      </div>
+      <div class="grid grid-3">
+        <div class="card stat-card"><div class="stat-label">Income</div><div class="stat-value income mono" id="reportIncome">$0</div></div>
+        <div class="card stat-card"><div class="stat-label">Expense</div><div class="stat-value expense mono" id="reportExpense">$0</div></div>
+        <div class="card stat-card"><div class="stat-label">Balance</div><div class="stat-value balance mono" id="reportBalance">$0</div></div>
+      </div>
+      <div class="grid grid-2 section-gap">
+        <div class="card">
+          <div class="card-head"><h3>Category Breakdown</h3></div>
+          <div class="chart-box"><canvas id="reportChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Budget vs Actual</h3></div>
+          <div id="reportBudgetList"></div>
+        </div>
+      </div>
+      <div class="card section-gap">
+        <div class="card-head"><h3>All Transactions This Month</h3></div>
+        <div class="table-wrap"><table id="reportTxTable"><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th class="text-right">Amount</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS VIEW ============ -->
+    <section class="view" id="view-settings">
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Profile</h3>
+          <div class="field"><label>Full Name</label><input type="text" id="settingsName"></div>
+          <div class="field"><label>Email</label><input type="email" id="settingsEmail" disabled></div>
+          <div class="field">
+            <label>Currency</label>
+            <select id="settingsCurrency">
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="BDT">BDT (৳)</option>
+              <option value="INR">INR (₹)</option>
+            </select>
+          </div>
+          <div class="field"><label>Monthly Income Target</label><input type="number" id="settingsIncomeTarget" min="0"></div>
+          <button class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+        </div>
+        <div class="card">
+          <h3>Change Password</h3>
+          <div class="field"><label>Current Password</label><input type="password" id="currentPassword"></div>
+          <div class="field"><label>New Password</label><input type="password" id="newPassword" minlength="6"></div>
+          <button class="btn btn-secondary" id="changePasswordBtn">Update Password</button>
+
+          <h3 class="section-gap">Custom Categories</h3>
+          <div class="field">
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="newCategoryName" placeholder="Category name">
+              <select id="newCategoryType" style="width:130px;">
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" id="addCategoryBtn">Add</button>
+            </div>
+          </div>
+          <div class="pill-row" id="customCategoriesList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ TRANSACTION MODAL ============ -->
+<div class="modal-overlay" id="txModalOverlay">
+  <div class="modal">
+    <span class="modal-close" id="txModalClose">✕</span>
+    <h3 id="txModalTitle">Add Transaction</h3>
+    <div class="type-toggle">
+      <button type="button" id="typeIncomeBtn" data-type="income">Income</button>
+      <button type="button" id="typeExpenseBtn" data-type="expense">Expense</button>
+    </div>
+    <input type="hidden" id="txId">
+    <div class="form-row">
+      <div class="field"><label>Amount</label><input type="number" id="txAmount" min="0.01" step="0.01" required></div>
+      <div class="field"><label>Date</label><input type="date" id="txDate" required></div>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="txCategory"></select>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="txDescription" placeholder="Optional note"></div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="txRecurring">
+      <label for="txRecurring">Recurring transaction</label>
+    </div>
+    <div class="field" id="frequencyField" style="display:none;">
+      <label>Frequency</label>
+      <select id="txFrequency">
+        <option value="weekly">Weekly</option>
+        <option value="monthly" selected>Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-block" id="saveTxBtn">Save Transaction</button>
+  </div>
+</div>
+
+<!-- ============ BUDGET MODAL ============ -->
+<div class="modal-overlay" id="budgetModalOverlay">
+  <div class="modal">
+    <span class="modal-close" id="budgetModalClose">✕</span>
+    <h3>Set Monthly Budget</h3>
+    <div class="field"><label>Category</label><select id="budgetCategory"></select></div>
+    <div class="field"><label>Month</label><input type="month" id="budgetModalMonth"></div>
+    <div class="field"><label>Budget Amount</label><input type="number" id="budgetAmount" min="1" step="0.01"></div>
+    <button class="btn btn-primary btn-block" id="saveBudgetBtn">Save Budget</button>
+  </div>
+</div>
+
+<!-- ============ GOAL MODAL ============ -->
+<div class="modal-overlay" id="goalModalOverlay">
+  <div class="modal">
+    <span class="modal-close" id="goalModalClose">✕</span>
+    <h3 id="goalModalTitle">New Savings Goal</h3>
+    <input type="hidden" id="goalId">
+    <div class="field"><label>Goal Name</label><input type="text" id="goalName" placeholder="e.g. Emergency Fund"></div>
+    <div class="form-row">
+      <div class="field"><label>Target Amount</label><input type="number" id="goalTarget" min="1"></div>
+      <div class="field"><label>Current Saved</label><input type="number" id="goalCurrent" min="0" value="0"></div>
+    </div>
+    <div class="field"><label>Deadline (optional)</label><input type="date" id="goalDeadline"></div>
+    <button class="btn btn-primary btn-block" id="saveGoalBtn">Save Goal</button>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

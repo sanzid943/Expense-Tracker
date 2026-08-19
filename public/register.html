@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — Smart Expense Tracker</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-brand"><div class="mark">৳</div><span>SpendTrack</span></div>
+    <p class="auth-sub">Create your account and start tracking smarter.</p>
+    <div class="auth-error" id="errorBox"></div>
+    <form id="registerForm">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="name" required placeholder="Jane Doe">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email" required placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" required placeholder="At least 6 characters" minlength="6">
+      </div>
+      <button type="submit" class="btn btn-primary">Create Account</button>
+    </form>
+    <div class="auth-footer">Already have an account? <a href="login.html">Log in</a></div>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script>
+  if (Auth.getToken()) window.location.href = 'index.html';
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorBox = document.getElementById('errorBox');
+    errorBox.style.display = 'none';
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    try {
+      const data = await API.post('/auth/register', { name, email, password }, false);
+      Auth.setSession(data.token, data.user);
+      window.location.href = 'index.html';
+    } catch (err) {
+      errorBox.textContent = err.message || 'Registration failed';
+      errorBox.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{
+  "users": [
+    {
+      "id": "49184204-e183-4924-a1f2-f46db411d230",
+      "name": "S M",
+      "email": "user@email.com",
+      "passwordHash": "$2a$10$wMV60u5qBmwHklocxxEbIeTsVFdu1/gnI1/KzT1wasH3i1xAlhBX6",
+      "currency": "BDT",
+      "theme": "dark",
+      "monthlyIncomeTarget": 0,
+      "createdAt": "2026-08-19T05:30:14.122Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "7990555f-098b-4ce8-9117-35e3d965041e",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "type": "expense",
+      "amount": 3800,
+      "category": "Food",
+      "description": "",
+      "date": "2026-07-30",
+      "recurring": true,
+      "frequency": "monthly",
+      "lastGeneratedDate": "2026-07-30",
+      "parentRecurringId": null,
+      "createdAt": "2026-08-19T05:34:53.908Z"
+    },
+    {
+      "id": "6db8da66-036c-4e05-a2fe-55305b2bf365",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "type": "income",
+      "amount": 4000,
+      "category": "Salary",
+      "description": "",
+      "date": "2026-07-31",
+      "recurring": true,
+      "frequency": "monthly",
+      "lastGeneratedDate": "2026-08-31",
+      "parentRecurringId": null,
+      "createdAt": "2026-08-19T05:35:43.854Z"
+    },
+    {
+      "id": "c2c25490-16f0-4193-84d6-4417b4877a2a",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "type": "expense",
+      "amount": 300,
+      "category": "Transport",
+      "description": "",
+      "date": "2026-07-19",
+      "recurring": true,
+      "frequency": "monthly",
+      "lastGeneratedDate": "2026-08-19",
+      "parentRecurringId": null,
+      "createdAt": "2026-08-19T05:36:43.721Z"
+    },
+    {
+      "id": "393a3876-ea42-49c8-8ab4-4d227f9dced8",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "type": "expense",
+      "amount": 300,
+      "category": "Transport",
+      "description": "",
+      "date": "2026-07-19",
+      "recurring": true,
+      "frequency": "monthly",
+      "parentRecurringId": "c2c25490-16f0-4193-84d6-4417b4877a2a",
+      "createdAt": "2026-08-19T05:36:43.731Z"
+    }
+  ],
+  "budgets": [
+    {
+      "id": "ad00100a-710d-41e4-8b00-24f5ca7b1bcd",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "category": "Food",
+      "amount": 4000,
+      "month": "2026-07"
+    },
+    {
+      "id": "937f03ac-0875-4d8b-953c-389786e2daa8",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "category": "Transport",
+      "amount": 500,
+      "month": "2026-07"
+    },
+    {
+      "id": "873d384b-fece-4db0-9e7a-679844327abb",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "category": "Education",
+      "amount": 500,
+      "month": "2026-07"
+    },
+    {
+      "id": "8a2b3c6e-393b-4593-9bc6-47dbe6ac516a",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "category": "Health",
+      "amount": 400,
+      "month": "2026-07"
+    },
+    {
+      "id": "eacc0c62-6f7e-46c7-b53d-595386396d3e",
+      "userId": "49184204-e183-4924-a1f2-f46db411d230",
+      "category": "Entertainment",
+      "amount": 600,
+      "month": "2026-07"
+    }
+  ],
+  "goals": [],
+  "categories": []
+}
