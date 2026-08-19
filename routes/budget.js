@@ -1,3 +1,4 @@
+
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const { readDB, writeDB } = require('../db/db');
@@ -6,7 +7,9 @@ const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 router.use(authMiddleware);
 
-// List budgets (optionally by month)
+
+// list budgets
+
 router.get('/', (req, res) => {
   const db = readDB();
   let list = db.budgets.filter(b => b.userId === req.userId);
@@ -14,7 +17,9 @@ router.get('/', (req, res) => {
   res.json(list);
 });
 
-// Create/update budget for category+month (upsert)
+
+// create/update budget for category+month
+
 router.post('/', (req, res) => {
   const { category, amount, month } = req.body;
   if (!category || amount === undefined || !month) {
@@ -55,7 +60,9 @@ router.delete('/:id', (req, res) => {
   res.json({ message: 'Deleted' });
 });
 
-// Budget status: spend vs limit + warnings
+
+// budget status
+
 router.get('/status/:month', (req, res) => {
   const db = readDB();
   const month = req.params.month;

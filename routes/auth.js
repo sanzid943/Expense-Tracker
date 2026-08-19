@@ -1,3 +1,4 @@
+
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -16,7 +17,9 @@ function publicUser(u) {
   return rest;
 }
 
-// Register
+
+// register
+
 router.post('/register', (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -47,7 +50,9 @@ router.post('/register', (req, res) => {
   res.status(201).json({ token, user: publicUser(user) });
 });
 
-// Login
+
+// login
+
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
@@ -63,7 +68,9 @@ router.post('/login', (req, res) => {
   res.json({ token, user: publicUser(user) });
 });
 
-// Get profile
+
+// get profile
+
 router.get('/me', authMiddleware, (req, res) => {
   const db = readDB();
   const user = db.users.find(u => u.id === req.userId);
@@ -71,7 +78,9 @@ router.get('/me', authMiddleware, (req, res) => {
   res.json(publicUser(user));
 });
 
-// Update profile
+
+// update profile
+
 router.put('/profile', authMiddleware, (req, res) => {
   const { name, currency, theme, monthlyIncomeTarget } = req.body;
   const db = readDB();
@@ -87,7 +96,9 @@ router.put('/profile', authMiddleware, (req, res) => {
   res.json(publicUser(user));
 });
 
-// Change password
+
+// change password
+
 router.put('/password', authMiddleware, (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const db = readDB();

@@ -1,3 +1,4 @@
+
 const express = require('express');
 const { readDB } = require('../db/db');
 const authMiddleware = require('../middleware/auth');
@@ -19,7 +20,9 @@ function lastNMonthKeys(n) {
   return keys;
 }
 
-// Spending pattern analysis: category totals per month for last 6 months
+
+// spending pattern analysis
+
 router.get('/patterns', (req, res) => {
   const db = readDB();
   const months = lastNMonthKeys(6);
@@ -42,8 +45,9 @@ router.get('/patterns', (req, res) => {
   res.json({ months, series });
 });
 
-// Budget recommendation: based on avg spend per category over last 3 months, suggest budgets
-// Also apply a 50/30/20 style guideline on overall income if available
+
+// budget recommendation
+
 router.get('/recommendation', (req, res) => {
   const db = readDB();
   const months = lastNMonthKeys(3);
@@ -58,7 +62,6 @@ router.get('/recommendation', (req, res) => {
 
   const recommendations = Object.entries(totals).map(([category, total]) => {
     const avg = total / months.length;
-    // recommend slightly below average spend to encourage saving (95%)
     return { category, averageSpend: Math.round(avg), recommendedBudget: Math.round(avg * 0.95) };
   });
 
@@ -76,7 +79,9 @@ router.get('/recommendation', (req, res) => {
   res.json({ recommendations, averageMonthlyIncome: Math.round(avgIncome), rule502030 });
 });
 
-// Unusual spending alerts: flag categories where current month spend > avg of prior 3 months + 40%
+
+// Unusual spending alerts
+
 router.get('/alerts', (req, res) => {
   const db = readDB();
   const now = new Date();
@@ -123,7 +128,9 @@ router.get('/alerts', (req, res) => {
   res.json(alerts);
 });
 
-// Expense prediction: simple linear regression over last 6 months' totals
+
+// Expense prediction
+
 router.get('/prediction', (req, res) => {
   const db = readDB();
   const months = lastNMonthKeys(6);
@@ -133,7 +140,9 @@ router.get('/prediction', (req, res) => {
     txs.filter(t => monthKey(t.date) === m).reduce((s, t) => s + t.amount, 0)
   );
 
+  
   // simple linear regression y = a + bx
+  
   const n = totals.length;
   const xs = totals.map((_, i) => i);
   const sumX = xs.reduce((a, b) => a + b, 0);
@@ -161,7 +170,9 @@ router.get('/prediction', (req, res) => {
   });
 });
 
+
 // Monthly financial report data
+
 router.get('/report/:month', (req, res) => {
   const db = readDB();
   const month = req.params.month;

@@ -1,3 +1,4 @@
+
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const { readDB, writeDB } = require('../db/db');
@@ -10,7 +11,9 @@ function monthKey(dateStr) {
   return dateStr.slice(0, 7); // YYYY-MM
 }
 
-// Generate due instances of recurring transactions (called on list fetch)
+
+// generate due instances of recurring transactions
+
 function processRecurring(db, userId) {
   const now = new Date();
   const templates = db.transactions.filter(
@@ -55,7 +58,9 @@ function processRecurring(db, userId) {
   });
 }
 
-// List transactions with filters
+
+// list transactions with filters
+
 router.get('/', (req, res) => {
   const db = readDB();
   processRecurring(db, req.userId);
@@ -81,7 +86,9 @@ router.get('/', (req, res) => {
   res.json(list);
 });
 
-// Create transaction
+
+// create transaction
+
 router.post('/', (req, res) => {
   const { type, amount, category, description, date, recurring, frequency } = req.body;
   if (!type || !['income', 'expense'].includes(type)) {
@@ -113,7 +120,9 @@ router.post('/', (req, res) => {
   res.status(201).json(tx);
 });
 
-// Update transaction
+
+// update transaction
+
 router.put('/:id', (req, res) => {
   const db = readDB();
   const tx = db.transactions.find(t => t.id === req.params.id && t.userId === req.userId);
@@ -132,7 +141,9 @@ router.put('/:id', (req, res) => {
   res.json(tx);
 });
 
-// Delete transaction
+
+// delete transaction
+
 router.delete('/:id', (req, res) => {
   const db = readDB();
   const idx = db.transactions.findIndex(t => t.id === req.params.id && t.userId === req.userId);
@@ -142,7 +153,9 @@ router.delete('/:id', (req, res) => {
   res.json({ message: 'Deleted' });
 });
 
-// Summary: totals
+
+// summary: totals
+
 router.get('/meta/summary', (req, res) => {
   const db = readDB();
   const list = db.transactions.filter(t => t.userId === req.userId);
@@ -155,7 +168,9 @@ router.get('/meta/summary', (req, res) => {
   res.json({ income, expense, balance: income - expense, count: filtered.length });
 });
 
-// Category-wise summary
+
+// category-wise summary
+
 router.get('/meta/category-summary', (req, res) => {
   const db = readDB();
   const { month, type } = req.query;
@@ -170,7 +185,9 @@ router.get('/meta/category-summary', (req, res) => {
   res.json(Object.entries(map).map(([category, total]) => ({ category, total })));
 });
 
-// Monthly summary (last N months)
+
+// monthly summary
+
 router.get('/meta/monthly-summary', (req, res) => {
   const db = readDB();
   const list = db.transactions.filter(t => t.userId === req.userId);
@@ -184,7 +201,9 @@ router.get('/meta/monthly-summary', (req, res) => {
   res.json(result);
 });
 
-// Weekly summary (last 8 weeks of expenses)
+
+// weekly summary
+
 router.get('/meta/weekly-summary', (req, res) => {
   const db = readDB();
   const list = db.transactions.filter(t => t.userId === req.userId && t.type === 'expense');
