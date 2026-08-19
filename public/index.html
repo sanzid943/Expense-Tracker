@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SpendTrack</title>
+
 <link rel="stylesheet" href="css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 <body>
 
@@ -54,7 +56,9 @@
       </div>
     </div>
 
-    <!-- ============ DASHBOARD VIEW ============ -->
+    
+    <!-- dashboard view -->
+    
     <section class="view active" id="view-dashboard">
       <div class="grid grid-4">
         <div class="card stat-card">
@@ -102,7 +106,9 @@
       </div>
     </section>
 
-    <!-- ============ TRANSACTIONS VIEW ============ -->
+
+    <!-- transactions view -->
+    
     <section class="view" id="view-transactions">
       <div class="toolbar">
         <input type="text" id="txSearch" placeholder="Search description or category...">
@@ -133,7 +139,9 @@
       </div>
     </section>
 
-    <!-- ============ BUDGET VIEW ============ -->
+
+    <!-- budget view -->
+    
     <section class="view" id="view-budget">
       <div class="toolbar">
         <label class="muted" style="font-size:.85rem;">Month:</label>
@@ -148,7 +156,9 @@
       </div>
     </section>
 
-    <!-- ============ INSIGHTS VIEW ============ -->
+
+    <!-- insights view -->
+    
     <section class="view" id="view-insights">
       <div class="grid grid-2">
         <div class="card">
@@ -175,7 +185,9 @@
       </div>
     </section>
 
-    <!-- ============ GOALS VIEW ============ -->
+
+    <!-- goals view -->
+    
     <section class="view" id="view-goals">
       <div class="toolbar">
         <div class="spacer"></div>
@@ -188,7 +200,9 @@
       </div>
     </section>
 
-    <!-- ============ REPORTS VIEW ============ -->
+
+    <!-- reports view -->
+    
     <section class="view" id="view-reports">
       <div class="toolbar">
         <label class="muted" style="font-size:.85rem;">Month:</label>
@@ -218,7 +232,9 @@
       </div>
     </section>
 
-    <!-- ============ SETTINGS VIEW ============ -->
+
+    <!-- settings view -->
+    
     <section class="view" id="view-settings">
       <div class="grid grid-2">
         <div class="card">
@@ -262,7 +278,9 @@
   </main>
 </div>
 
-<!-- ============ TRANSACTION MODAL ============ -->
+
+<!-- transaction modal -->
+
 <div class="modal-overlay" id="txModalOverlay">
   <div class="modal">
     <span class="modal-close" id="txModalClose">✕</span>
@@ -297,7 +315,9 @@
   </div>
 </div>
 
-<!-- ============ BUDGET MODAL ============ -->
+
+<!-- budget modal -->
+
 <div class="modal-overlay" id="budgetModalOverlay">
   <div class="modal">
     <span class="modal-close" id="budgetModalClose">✕</span>
@@ -309,7 +329,9 @@
   </div>
 </div>
 
-<!-- ============ GOAL MODAL ============ -->
+
+<!-- goal modal -->
+
 <div class="modal-overlay" id="goalModalOverlay">
   <div class="modal">
     <span class="modal-close" id="goalModalClose">✕</span>
@@ -329,5 +351,6 @@
 <script src="js/charts.js"></script>
 <script src="js/export.js"></script>
 <script src="js/app.js"></script>
+
 </body>
 </html>
